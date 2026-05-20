@@ -1,0 +1,49 @@
+# Render Infrastructure-as-Code (IaC) Configuration File
+# Placed inside the Back_end folder
+
+services:
+  - type: web
+    name: smart-hydration-backend
+    runtime: docker
+    plan: free # Can be 'free', 'starter', etc.
+    envVars:
+      - key: DEBUG
+        value: "False"
+      
+      - key: SECRET_KEY
+        generateValue: true # Render will automatically generate a secure random string
+
+      - key: ALLOWED_HOSTS
+        value: "*"
+
+      # -------------------------------------------------------------
+      # DATABASE CONFIGURATION
+      # -------------------------------------------------------------
+      # If you are using PostgreSQL (Option B), uncomment the DATABASE_URL line below
+      # to link your service directly to the database declared at the bottom.
+      #
+      # - key: DATABASE_URL
+      #   fromDatabase:
+      #     name: smart-hydration-db
+      #     property: connectionString
+
+    # ---------------------------------------------------------------
+    # PERSISTENT STORAGE (For SQLite - Option A)
+    # ---------------------------------------------------------------
+    # This mounts a persistent volume to preserve your SQLite database
+    # across deployments and container restarts.
+    # Note: Persistent disks are not available on Render's 'free' instance plan.
+    # To use a disk, upgrade the service plan to 'starter' or provision PostgreSQL instead.
+    disk:
+      name: sqlite-data
+      mountPath: /app/db-data
+      sizeGB: 1
+
+# -----------------------------------------------------------------
+# MANAGED POSTGRESQL DATABASE (For Production - Option B)
+# -----------------------------------------------------------------
+# To deploy a managed Postgres database, uncomment the block below.
+#
+# databases:
+#   - name: smart-hydration-db
+#     plan: free
